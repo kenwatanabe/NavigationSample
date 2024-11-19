@@ -1,33 +1,68 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var router: Router
-    
-    init(router: Router) {
-        self.router = router
-    }
+    @ObservedObject var mainRouter: MainRouter
     
     var body: some View {
-        Group {
-            switch router.currentScreen {
-            case .flowPatternSelection:
-                FlowPatternSelectionView()
-            case .tutorial:
-                TutorialView(router: router)
-            case .numberBInput:
-                NumberBInputView(router: router)
-            case .pinInput:
-                PinInputView(router: router)
-            case .agreement:
-                AgreementView(router: router)
-            case .passwordInput:
-                PasswordInputView(router: router)
-            case .none:
-                EmptyView()
+        NavigationView {
+            Group {
+                switch mainRouter.currentScreen {
+                case .flowPatternSelection:
+                    let router = FlowPatternSelectionRouter(parentRouter: mainRouter)
+                    FlowPatternSelectionView(router: router)
+                    
+                case .tutorial:
+                    buildScreen(
+                        screen: .tutorial,
+                        router: TutorialRouter(parentRouter: mainRouter),
+                        normalView: TutorialView.init
+                    )
+                    
+                case .numberBInput:
+                    buildScreen(
+                        screen: .numberBInput,
+                        router: NumberBInputRouter(parentRouter: mainRouter),
+                        normalView: NumberBInputView.init
+                    )
+                    
+                case .pinInput:
+                    buildScreen(
+                        screen: .pinInput,
+                        router: PinInputRouter(parentRouter: mainRouter),
+                        normalView: PinInputView.init
+                    )
+                    
+                case .agreement:
+                    buildScreen(
+                        screen: .agreement,
+                        router: AgreementRouter(parentRouter: mainRouter),
+                        normalView: AgreementView.init
+                    )
+                    
+                case .passwordInput:
+                    buildScreen(
+                        screen: .passwordInput,
+                        router: PasswordInputRouter(parentRouter: mainRouter),
+                        normalView: PasswordInputView.init
+                    )
+                    
+                case .none:
+                    Text("画面が見つかりません")
+                }
             }
         }
-        .onAppear {
-            router.start()
+    }
+    
+    @ViewBuilder
+    private func buildScreen<R: RouterProtocol, V: View>(
+        screen: Screen,
+        router: R,
+        normalView: (R) -> V
+    ) -> some View {
+        if mainRouter.isLastScreen(screen) {
+            LastScreenTemplate(router: router, screen: screen)
+        } else {
+            normalView(router)
         }
     }
 }

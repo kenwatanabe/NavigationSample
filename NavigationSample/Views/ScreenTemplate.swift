@@ -1,32 +1,46 @@
 import SwiftUI
 
-struct ScreenTemplate: View {
+struct ScreenTemplate<Content: View>: View {
     let title: String
-    let router: Router
+    let showNextButton: Bool
+    let router: (any RouterProtocol)?
+    let content: () -> Content
     
     var body: some View {
         VStack(spacing: 20) {
-            Text(title)
-                .font(.title)
-                .padding()
+            content()
             
-            if let currentScreen = router.currentScreen,
-               router.isLastScreen(currentScreen) {
-                Button("完了") {
-                    router.backToFlowPatternSelection()
+            if showNextButton,
+               let router = router {
+                Button(action: {
+                    router.onNext()
+                }) {
+                    Text("次へ")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-            } else {
-                Button("次へ") {
-                    router.goToNext()
+            }
+        }
+        .padding()
+        .navigationTitle(title)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if let router = router,
+                   let mainRouter = router.parentRouter,
+                   mainRouter.canGoBack() {
+                    Button(action: {
+                        mainRouter.goBack()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("戻る")
+                        }
+                    }
                 }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
         }
     }

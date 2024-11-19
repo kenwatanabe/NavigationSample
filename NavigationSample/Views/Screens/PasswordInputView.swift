@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct PasswordInputView: View {
-    let router: Router
+    @ObservedObject var router: PasswordInputRouter
     
     var body: some View {
         ScreenTemplate(
             title: Screen.passwordInput.title,
+            showNextButton: true,
             router: router
-        )
+        ) {
+            Text("パスワード入力画面")
+        }
     }
 }

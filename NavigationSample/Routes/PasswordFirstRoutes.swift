@@ -4,7 +4,9 @@ struct PasswordFirstRoutes {
             NavigationRoute(
                 screen: .tutorial,
                 nextRoutes: [.init(screen: .passwordInput)],
-                skipCondition: nil
+                skipCondition: { context in
+                    context.shouldSkipTutorial
+                }
             ),
             NavigationRoute(
                 screen: .passwordInput,

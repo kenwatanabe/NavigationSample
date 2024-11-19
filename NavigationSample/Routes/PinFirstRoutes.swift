@@ -4,7 +4,9 @@ struct PinFirstRoutes {
             NavigationRoute(
                 screen: .tutorial,
                 nextRoutes: [.init(screen: .pinInput)],
-                skipCondition: nil
+                skipCondition: { context in
+                    context.shouldSkipTutorial
+                }
             ),
             NavigationRoute(
                 screen: .pinInput,

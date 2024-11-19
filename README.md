@@ -17,4 +17,4 @@
 - パスワード入力画面
 
 ### 備考
-NavigationViewとNavigationLinkを使ったものも作った方が良さそう
+NavigationLinkは柔軟性がなくなるので自前管理

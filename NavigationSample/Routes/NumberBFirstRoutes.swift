@@ -4,7 +4,9 @@ struct NumberBFirstRoutes {
             NavigationRoute(
                 screen: .tutorial,
                 nextRoutes: [.init(screen: .numberBInput)],
-                skipCondition: nil
+                skipCondition: { context in
+                    return context.shouldSkipTutorial
+                }
             ),
             NavigationRoute(
                 screen: .numberBInput,
