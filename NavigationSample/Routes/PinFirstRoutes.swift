@@ -2,24 +2,24 @@ struct PinFirstRoutes {
     static func getRoutes() -> [NavigationRoute] {
         [
             NavigationRoute(
-                screen: .tutorial,
-                nextRoutes: [.init(screen: .pinInput)],
+                screen: .pinFirstTutorial,
+                nextRoutes: [.init(screen: .pinFirstPinInput)],
                 skipCondition: { context in
                     context.shouldSkipTutorial
                 }
             ),
             NavigationRoute(
-                screen: .pinInput,
-                nextRoutes: [.init(screen: .agreement)],
+                screen: .pinFirstPinInput,
+                nextRoutes: [.init(screen: .pinFirstAgreement)],
                 skipCondition: nil
             ),
             NavigationRoute(
-                screen: .agreement,
-                nextRoutes: [.init(screen: .passwordInput)],
+                screen: .pinFirstAgreement,
+                nextRoutes: [.init(screen: .pinFirstPasswordInput)],
                 skipCondition: nil
             ),
             NavigationRoute(
-                screen: .passwordInput,
+                screen: .pinFirstPasswordInput,
                 nextRoutes: [],
                 skipCondition: nil
             )

@@ -17,4 +17,4 @@
 - パスワード入力画面
 
 ### 備考
-NavigationLinkは柔軟性がなくなるので自前管理
+NavigationLink使用

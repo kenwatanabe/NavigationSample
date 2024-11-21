@@ -1,3 +1,3 @@
-struct NavigationContext {
-    var shouldSkipTutorial: Bool
+protocol NavigationContext {
+    var shouldSkipTutorial: Bool { get }
 }

@@ -6,10 +6,10 @@ struct NavigationFlowApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(mainRouter: mainRouter)
-                .onAppear {
-                    mainRouter.currentScreen = .flowPatternSelection
-                }
+            NavigationView {
+                ContentView()
+                    .environmentObject(mainRouter)
+            }
         }
     }
 }

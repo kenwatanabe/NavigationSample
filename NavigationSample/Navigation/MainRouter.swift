@@ -5,17 +5,10 @@ final class MainRouter: ObservableObject {
     @Published private(set) var selectedPattern: FlowPattern?
     private var routes: [NavigationRoute] = []
     private var navigationHistory: [Screen] = []
-    var context: NavigationContext
+    var context: BaseNavigationContext
     
-    init() {
-        self.context = NavigationContext(shouldSkipTutorial: false)
-    }
-    
-    func backToFlowPatternSelection() {
-        selectedPattern = nil
-        currentScreen = .flowPatternSelection
-        navigationHistory.removeAll()
-        routes = []
+    init(shouldSkipTutorial: Bool = false) {
+        self.context = BaseNavigationContext(shouldSkipTutorial: shouldSkipTutorial)
     }
     
     func start(with pattern: FlowPattern) {
@@ -35,40 +28,31 @@ final class MainRouter: ObservableObject {
         }
     }
     
-    func navigateToNext() {
-        navigateToNext(from: currentScreen)
-    }
-    
-    private func navigateToNext(from screen: Screen?) {
-        if screen == nil {
-            let firstRoute = routes.first
-            
-            if let route = firstRoute,
-               let skipCondition = route.skipCondition,
-               skipCondition(context) {
-                if let nextScreen = route.nextRoutes.first?.screen {
-                    currentScreen = nextScreen
-                    return
-                }
-            } else {
-                if let route = firstRoute {
-                    currentScreen = route.screen
-                    return
-                }
+    func navigateToNext(from screen: Screen? = nil) {
+        let currentRoute = screen.map { screen in
+            routes.first { $0.screen == screen }
+        } ?? routes.first
+        
+        if let route = currentRoute,
+           let skipCondition = route.skipCondition,
+           skipCondition(context) {
+            if let nextScreen = route.nextRoutes.first?.screen {
+                navigateToNext(from: nextScreen)
+                return
             }
         }
-        
-        let currentRoute = routes.first { $0.screen == (screen ?? .tutorial) }
         
         if let route = currentRoute {
             if let nextRoute = route.nextRoutes.first {
                 navigationHistory.append(currentScreen ?? .flowPatternSelection)
                 currentScreen = nextRoute.screen
             }
+        } else {
+            if let firstRoute = routes.first {
+                currentScreen = firstRoute.screen
+            }
         }
     }
-    
-    
     
     func goBack() {
         if let previousScreen = navigationHistory.popLast() {
@@ -95,9 +79,10 @@ final class MainRouter: ObservableObject {
         return route.nextRoutes.isEmpty
     }
     
-    
-    
-    func updateContext(shouldSkipTutorial: Bool) {
-        context = NavigationContext(shouldSkipTutorial: shouldSkipTutorial)
+    func backToFlowPatternSelection() {
+        selectedPattern = nil
+        currentScreen = .flowPatternSelection
+        navigationHistory.removeAll()
+        routes = []
     }
 }
